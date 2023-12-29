@@ -17,3 +17,7 @@ form {
     border: 2px solid teal;
     text-align: center;
 }
+
+label {
+    align-self: center;
+}
