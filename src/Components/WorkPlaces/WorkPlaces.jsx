@@ -1,13 +1,35 @@
-import React from "react";
-import { defaultWorkPlace } from "../MyForm/MyForm.jsx";
+import React, { useEffect, useState } from "react";
 import NewWorkPlace from "./NewWorkPlace.jsx";
+import getId from "./getId.js";
 
-const WorkPlaces = ({ user, setUser }) => {
-    function handleAddWorkplace() {
-        setUser({
-            ...user,
-            workPlaces: [...user.workPlaces, { ...defaultWorkPlace }],
-        });
+const emptyWorkPlace = {
+    organization: "",
+    startYear: "",
+    endYear: "",
+};
+
+const WorkPlaces = ({ result, allReset, setHasAllValid }) => {
+    const [workPlaces, setWorkPlaces] = useState([]);
+
+    useEffect(() => {
+        setWorkPlaces([]);
+    }, [allReset]);
+
+    useEffect(() => {
+        result.workPlaces = [...workPlaces];
+    }, [workPlaces]);
+
+    function addWorkPlaceHandler() {
+        setWorkPlaces([...workPlaces, { ...emptyWorkPlace, id: getId() }]);
+    }
+    function removeWorkPlace(index) {
+        setWorkPlaces(
+            workPlaces.filter((el, ind) => {
+                if (ind !== index) {
+                    return true;
+                }
+            })
+        );
     }
 
     return (
@@ -22,18 +44,24 @@ const WorkPlaces = ({ user, setUser }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {user.workPlaces.map((workplace, index) => (
+                    {workPlaces.map((workplace, index) => (
                         <NewWorkPlace
-                            key={index}
-                            workplace={workplace}
+                            id={workplace.id}
+                            key={workplace.id}
                             index={index}
-                            user={user}
-                            setUser={setUser}
+                            result={result}
+                            workPlaces={workPlaces}
+                            setWorkPlaces={setWorkPlaces}
+                            setHasAllValid={setHasAllValid}
+                            removeWorkPlace={removeWorkPlace}
                         />
                     ))}
                 </tbody>
             </table>
-            <button type="button" onClick={handleAddWorkplace}>
+            <button
+                type="button"
+                onClick={addWorkPlaceHandler}
+            >
                 Добавить место работы
             </button>
         </>

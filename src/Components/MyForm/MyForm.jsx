@@ -1,64 +1,73 @@
 import React, { useState } from "react";
-import MyInput from "../MyInput/MyInput";
-import MyRadio from "../MyRadio/MyRadio";
 import WorkPlaces from "../WorkPlaces/WorkPlaces";
 import EmailInput from "../EmailInput/EmailInput";
+import FullNameInput from "../FullNameInput/FullNameInput";
+import RadioPlace from "../RadioPlace/RadioPlace";
+import BirthdayYear from "../BirthdayYear/BirthdayYear";
 
-export const defaultWorkPlace = {
-    organization: "",
-    startYear: "",
-    endYear: "",
-};
-const emptyUser = {
+const result = {
     fullName: "",
-    gender: "",
     birthdayYear: "",
     email: "",
+    gender: "",
     workPlaces: [],
 };
 
 const MyForm = () => {
-    const [user, setUser] = useState(emptyUser);
+    const [allReset, setAllReset] = useState(false);
+    const [hasAllValid, setHasAllValid] = useState(true);
+
+    function addResultPropertie(propertie, value) {
+        result[propertie] = value;
+    }
 
     function formSubmitHandler(e) {
         e.preventDefault();
-        if (user.fullName && user.birthdayYear && user.gender && user.email) {
-            console.log(user);
-        }
+        if (hasAllValid) console.log(result);
     }
 
-    const buttonResetHandler = () => {
-        setUser({
-            ...emptyUser,
-            workPlaces: [],
-        });
+    const buttonResetHandler = (e) => {
+        setTimeout(() => {
+            setAllReset(false);
+            setAllReset(true);
+        }, 0);
     };
 
     return (
         <form onSubmit={formSubmitHandler}>
-            <MyInput inpType="FullName" user={user} setUser={setUser}>
-                Фамилия Имя Отчество
-            </MyInput>
-            <div>
-                <MyRadio
-                    user={user}
-                    setUser={setUser}
-                    name={"gender"}
-                    value={"М"}
-                />
-                <MyRadio
-                    user={user}
-                    setUser={setUser}
-                    name={"gender"}
-                    value={"Ж"}
-                />
-            </div>
-            <MyInput inpType="BirthdayYear" user={user} setUser={setUser}>
-                Год рождения
-            </MyInput>
-            <EmailInput setUser={setUser} user={user} />
-            <WorkPlaces user={user} setUser={setUser} />
-            <button type="reset" onClick={buttonResetHandler}>
+            <FullNameInput
+                allReset={allReset}
+                setHasAllValid={setHasAllValid}
+                addResultPropertie={addResultPropertie}
+            />
+            <BirthdayYear
+                allReset={allReset}
+                setHasAllValid={setHasAllValid}
+                addResultPropertie={addResultPropertie}
+            />
+            <RadioPlace
+                allReset={allReset}
+                radioInfo={[
+                    { name: "gender", value: "М" },
+                    { name: "gender", value: "Ж" },
+                ]}
+                setHasAllValid={setHasAllValid}
+                addResultPropertie={addResultPropertie}
+            />
+            <EmailInput
+                allReset={allReset}
+                setHasAllValid={setHasAllValid}
+                addResultPropertie={addResultPropertie}
+            />
+            <WorkPlaces
+                result={result}
+                allReset={allReset}
+                setHasAllValid={setHasAllValid}
+            />
+            <button
+                type="reset"
+                onClick={buttonResetHandler}
+            >
                 Очистить
             </button>
             <button type="submit">Отправить</button>

@@ -1,46 +1,50 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import emailInputValidate from "./emailInputValidate";
 
-const EmailInput = ({ setUser, user }) => {
-    const [notValid, setNotValid] = useState(false);
-    const validMessage =
-        user.email.trim() === "" && notValid
-            ? "Обязательно к заполнению"
-            : !/\w{1,}@\w{1,}/.test(user.email) && notValid
-            ? 'почта должна быть в формате "text@domain.ru" или "text@domain.com"'
-            : "";
+const EmailInput = ({ addResultPropertie, allReset, setHasAllValid }) => {
+    const [email, setEmail] = useState("");
+    const [valid, setValid] = useState(true);
+    const [validMessage, setValidMessage] = useState("");
 
-    function emailInputBlurHandler(e) {
-        if (e.target.value.trim() === "") {
-            setNotValid(true);
-            return;
+    useEffect(() => {
+        setEmail("");
+        setValid(true);
+        setHasAllValid(true);
+        setValidMessage("");
+    }, [allReset]);
+
+    function blurHandler(e) {
+        if (emailInputValidate(e.target.value).isValid) {
+            setValid(true);
+            setHasAllValid(true);
+            setValidMessage("");
+            addResultPropertie("email", e.target.value);
+        } else {
+            setValid(false);
+            setHasAllValid(false);
+            setValidMessage(emailInputValidate(e.target.value).validMessage);
+            addResultPropertie("email", "");
         }
+    }
 
-        if (
-            !/\w{1,}@\w{1,}/.test(e.target.value) ||
-            !/(\.ru|\.com)$/.test(e.target.value)
-        ) {
-            setNotValid(true);
-            return;
-        }
-        setNotValid(false);
+    function changeHandler(e) {
+        setEmail(e.target.value);
     }
 
     return (
         <>
             <label>
                 <input
-                    className={notValid ? "not-valid" : ""}
+                    className={valid ? "" : "not-valid"}
                     required
                     type="email"
-                    value={user.email}
-                    onChange={(e) => {
-                        setUser({ ...user, email: e.target.value });
-                    }}
-                    onBlur={emailInputBlurHandler}
+                    value={email}
+                    onChange={changeHandler}
+                    onBlur={blurHandler}
                 />
-                email
+                <span>email</span>
             </label>
-            <p style={{ color: "red" }}>{validMessage}</p>
+            <p className="valid-message">{validMessage}</p>
         </>
     );
 };

@@ -6,6 +6,9 @@
 .not-valid {
     outline: red 2px solid;
 }
+.valid-message {
+    color: red;
+}
 body {
     padding: 10px 15px;
 }
