@@ -5,7 +5,7 @@ const EmailInput = ({ setUser, user }) => {
     const validMessage =
         user.email.trim() === "" && notValid
             ? "Обязательно к заполнению"
-            : !/\w{1,}@\w{1,}/.test(user.email)
+            : !/\w{1,}@\w{1,}/.test(user.email) && notValid
             ? 'почта должна быть в формате "text@domain.ru" или "text@domain.com"'
             : "";
 
