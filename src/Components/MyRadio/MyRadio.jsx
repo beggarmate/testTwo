@@ -5,6 +5,7 @@ const MyRadio = ({ value, setUser, user, name }) => {
         <label>
             {value}
             <input
+                required
                 type="radio"
                 value={value}
                 name={name}

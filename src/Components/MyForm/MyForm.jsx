@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MyInput from "../MyInput/MyInput";
 import MyRadio from "../MyRadio/MyRadio";
 import WorkPlaces from "../WorkPlaces/WorkPlaces";
@@ -18,12 +18,18 @@ const emptyUser = {
 
 const MyForm = () => {
     const [user, setUser] = useState(emptyUser);
-    console.log("render form");
     return (
         <form
             onSubmit={(e) => {
                 e.preventDefault();
-                console.log(user);
+                if (
+                    user.fullName &&
+                    user.birthdayYear &&
+                    user.gender &&
+                    user.email
+                ) {
+                    console.log(user);
+                }
             }}
         >
             <MyInput inpType="FullName" user={user} setUser={setUser}>
@@ -48,6 +54,7 @@ const MyForm = () => {
             </MyInput>
             <label>
                 <input
+                    required
                     type="email"
                     value={user.email}
                     onChange={(e) => {
@@ -55,9 +62,6 @@ const MyForm = () => {
                     }}
                     onBlur={(e) => {
                         if (e.target.value.trim === "") {
-                            e.target.className = "not-valid";
-                        } else {
-                            e.target.className = "";
                         }
                     }}
                 />
@@ -65,6 +69,7 @@ const MyForm = () => {
             </label>
             <WorkPlaces user={user} setUser={setUser} />
             <button
+                type="reset"
                 onClick={() => {
                     setUser({
                         ...emptyUser,

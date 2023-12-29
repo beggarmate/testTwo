@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 const MyInput = ({ children, user, setUser, inpType }) => {
     // const [inpValue, setInpValue] = useState(user.fullName);
@@ -8,6 +8,7 @@ const MyInput = ({ children, user, setUser, inpType }) => {
         <>
             <label>
                 <input
+                    required
                     onChange={(e) => {
                         setCorrect(false);
                         if (inpType === "FullName")
@@ -28,9 +29,10 @@ const MyInput = ({ children, user, setUser, inpType }) => {
                         if (
                             inpType === "BirthdayYear" &&
                             e.target.value >= 1900 &&
-                            e.target.value < new Date().getFullYear() - 18
+                            e.target.value <= new Date().getFullYear() - 18
                         ) {
                             setCorrect(false);
+
                             setUser({ ...user, birthdayYear: e.target.value });
                         }
                     }}
@@ -59,8 +61,12 @@ const MyInput = ({ children, user, setUser, inpType }) => {
                               user.birthdayYear < 1900
                             ? "Год рождения не может быть меньше 1900"
                             : inpType === "BirthdayYear" &&
-                              user.birthdayYear > new Date().getFullYear() - 18
+                              user.birthdayYear >
+                                  new Date().getFullYear() - 18 &&
+                              user.birthdayYear <= new Date().getFullYear()
                             ? "Возраст должен быть больше 18"
+                            : user.birthdayYear > new Date().getFullYear()
+                            ? "Дата рождения не может быть больше текущего года"
                             : null}
                     </p>
                 ) : null}
