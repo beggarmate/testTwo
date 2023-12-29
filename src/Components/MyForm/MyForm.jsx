@@ -27,8 +27,8 @@ const MyForm = () => {
     }
 
     const buttonResetHandler = (e) => {
+        setAllReset(false);
         setTimeout(() => {
-            setAllReset(false);
             setAllReset(true);
         }, 0);
     };
