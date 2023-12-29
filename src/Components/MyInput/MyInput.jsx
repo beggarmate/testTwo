@@ -40,8 +40,12 @@ const MyInput = ({ children, user, setUser, inpType }) => {
             : "";
     const inputClassName = correct ? "not-valid" : null;
     const correctErrorMessage =
-        inpType === "FullName"
+        inpType === "FullName" && user.fullName === ""
+            ? "Обязательно к заполнению"
+            : inpType === "FullName"
             ? "Поле должно содержать не меньше трёх слов"
+            : inpType === "BirthdayYear" && user.birthdayYear === ""
+            ? "Обязательно к заполнению"
             : inpType === "BirthdayYear" && user.birthdayYear < 1900
             ? "Год рождения не может быть меньше 1900"
             : inpType === "BirthdayYear" &&
