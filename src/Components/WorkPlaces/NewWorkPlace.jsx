@@ -7,7 +7,7 @@ const NewWorkPlace = ({ index, workplace, user, setUser }) => {
         correctEndYear: true,
     });
 
-    function handleOrganizationChange(organization, index) {
+    function inputOrganizationChangeHandler(organization, index) {
         user.workPlaces[index].organization = organization;
         setUser({
             ...user,
@@ -15,7 +15,7 @@ const NewWorkPlace = ({ index, workplace, user, setUser }) => {
         });
     }
 
-    function handleEndYearChange(endYear, index) {
+    function inputEndYearChangeHandler(endYear, index) {
         user.workPlaces[index].endYear = endYear;
         setUser({
             ...user,
@@ -23,7 +23,7 @@ const NewWorkPlace = ({ index, workplace, user, setUser }) => {
         });
     }
 
-    function handleStartYearChange(startYear, index) {
+    function inputStartYearChangeHandler(startYear, index) {
         user.workPlaces[index].startYear = startYear;
         setUser({
             ...user,
@@ -31,7 +31,7 @@ const NewWorkPlace = ({ index, workplace, user, setUser }) => {
         });
     }
 
-    function handleRemoveWorkplace(index) {
+    function buttonRemoveWorkplaceHandler(index) {
         setUser({
             ...user,
             workPlaces: user.workPlaces.filter(
@@ -40,6 +40,102 @@ const NewWorkPlace = ({ index, workplace, user, setUser }) => {
         });
     }
 
+    function inputOrganizationBlurHandler(e) {
+        if (e.target.value === "") {
+            setCorrect({
+                ...correct,
+                correctOrganization: false,
+            });
+            return;
+        }
+        setCorrect({
+            ...correct,
+            correctOrganization: true,
+        });
+    }
+
+    function inputStartYearBlurHandler(e) {
+        if (
+            +e.target.value < +user.birthdayYear ||
+            +e.target.value < +user.birthdayYear + 18 ||
+            (+e.target.value >= +user.birthdayYear &&
+                +e.target.value < +user.birthdayYear + 18) ||
+            e.target.value >= new Date().getFullYear() ||
+            e.target.value < 1900
+        ) {
+            setCorrect({
+                ...correct,
+                correctStartYear: false,
+            });
+        } else
+            setCorrect({
+                ...correct,
+                correctStartYear: true,
+            });
+    }
+
+    function inputEndYearBlurHandler(e) {
+        if (user.workPlaces[index].startYear && e.target.value === "") {
+            setCorrect({
+                ...correct,
+                correctEndYear: true,
+            });
+            return;
+        }
+        if (
+            (+e.target.value < 1900 && e.target.value !== "") ||
+            +e.target.value < +user.workPlaces[index].startYear ||
+            +e.target.value > new Date().getFullYear()
+        ) {
+            setCorrect({
+                ...correct,
+                correctEndYear: false,
+            });
+        } else
+            setCorrect({
+                ...correct,
+                correctEndYear: true,
+            });
+    }
+
+    const errorValidOrganizationText =
+        user.workPlaces[index].organization.trim() === "" &&
+        !correct.correctOrganization
+            ? "Поле обязательно к заполнению"
+            : "";
+
+    const errorValidStartYearText =
+        user.workPlaces[index].startYear.trim() === "" &&
+        !correct.correctStartYear
+            ? "Поле обязательно к заполнению"
+            : +user.workPlaces[index].startYear < 1900 &&
+              !correct.correctStartYear
+            ? "Начало работы не раньше 1900 года"
+            : +user.workPlaces[index].startYear < +user.birthdayYear &&
+              !correct.correctStartYear
+            ? "начало работы не может быть раньше рождения"
+            : +user.workPlaces[index].startYear >= +user.birthdayYear &&
+              +user.workPlaces[index].startYear < +user.birthdayYear + 18 &&
+              !correct.correctStartYear
+            ? "работу до 18 нельзя указывать"
+            : user.workPlaces[index].startYear >= new Date().getFullYear() &&
+              !correct.correctStartYear
+            ? "Нельзя указывать текущий год и следующие после него"
+            : "";
+
+    const errorValidEndYearText =
+        !user.workPlaces[index].startYear.trim() && !correct.correctEndYear
+            ? "Начало работы обязательно"
+            : +user.workPlaces[index].endYear <
+                  +user.workPlaces[index].startYear && !correct.correctEndYear
+            ? "Год окончания работы не может быть раньше её начала"
+            : +user.workPlaces[index].endYear < 1900 && !correct.correctEndYear
+            ? "не раньше 1900"
+            : +user.workPlaces[index].endYear >= new Date().getFullYear() &&
+              !correct.correctEndYear
+            ? "Нельзя указывать год больше текущего"
+            : "";
+
     return (
         <tr key={index}>
             <td>
@@ -47,98 +143,43 @@ const NewWorkPlace = ({ index, workplace, user, setUser }) => {
                     required
                     type="text"
                     className={!correct.correctOrganization ? "not-valid" : ""}
-                    onBlur={(e) => {
-                        setCorrect({
-                            ...correct,
-                            correctOrganization: true,
-                        });
-                    }}
+                    onBlur={inputOrganizationBlurHandler}
                     value={workplace.organization}
                     onChange={(e) =>
-                        handleOrganizationChange(e.target.value, index)
+                        inputOrganizationChangeHandler(e.target.value, index)
                     }
                 />
-                <p style={{ color: "red" }}>
-                    {user.workPlaces[index].organization.trim() === "" &&
-                    !correct.correctOrganization
-                        ? "Поле обязательно к заполнению"
-                        : ""}
-                </p>
+                <p style={{ color: "red" }}>{errorValidOrganizationText}</p>
             </td>
             <td>
                 <input
                     type="number"
                     className={!correct.correctStartYear ? "not-valid" : ""}
-                    onBlur={(e) => {
-                        if (
-                            e.target.value < +user.birthdayYear + 18 ||
-                            e.target.value > new Date().getFullYear()
-                        ) {
-                            setCorrect({
-                                ...correct,
-                                correctStartYear: false,
-                            });
-                        } else
-                            setCorrect({
-                                ...correct,
-                                correctStartYear: true,
-                            });
-                    }}
+                    onBlur={inputStartYearBlurHandler}
                     value={workplace.startYear}
                     onChange={(e) => {
-                        handleStartYearChange(e.target.value, index);
+                        inputStartYearChangeHandler(e.target.value, index);
                     }}
                 />
-                <p style={{ color: "red" }}>
-                    {user.workPlaces[index].startYear <
-                        +user.birthdayYear + 18 && !correct.correctStartYear
-                        ? "работу до 18 нельзя указывать"
-                        : user.workPlaces[index].startYear >
-                              new Date().getFullYear() &&
-                          !correct.correctStartYear
-                        ? "Нельзя указывать текущий год и следующие после него"
-                        : ""}
-                </p>
+                <p style={{ color: "red" }}>{errorValidStartYearText}</p>
             </td>
             <td>
                 <input
                     type="number"
                     className={!correct.correctEndYear ? "not-valid" : ""}
-                    onBlur={(e) => {
-                        if (
-                            (e.target.value < 1900 && e.target.value !== "") ||
-                            e.target.value < user.workPlaces[index].startYear ||
-                            e.target.value > new Date().getFullYear()
-                        ) {
-                            setCorrect({
-                                ...correct,
-                                correctEndYear: false,
-                            });
-                        } else
-                            setCorrect({
-                                ...correct,
-                                correctEndYear: true,
-                            });
-                    }}
+                    onBlur={inputEndYearBlurHandler}
                     value={workplace.endYear}
                     onChange={(e) => {
-                        handleEndYearChange(e.target.value, index);
+                        inputEndYearChangeHandler(e.target.value, index);
                     }}
                 />
-                <p style={{ color: "red" }}>
-                    {user.workPlaces[index].endYear <
-                        user.workPlaces[index].startYear &&
-                    !correct.correctEndYear
-                        ? "Год окончания работы не может быть раньше её начала"
-                        : user.workPlaces[index].endYear >=
-                              new Date().getFullYear() &&
-                          !correct.correctEndYear
-                        ? "Нельзя указывать год больше текущего"
-                        : ""}
-                </p>
+                <p style={{ color: "red" }}>{errorValidEndYearText}</p>
             </td>
             <td>
-                <button onClick={() => handleRemoveWorkplace(index)}>
+                <button
+                    type="button"
+                    onClick={() => buttonRemoveWorkplaceHandler(index)}
+                >
                     Удалить
                 </button>
             </td>

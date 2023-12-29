@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import MyInput from "../MyInput/MyInput";
 import MyRadio from "../MyRadio/MyRadio";
 import WorkPlaces from "../WorkPlaces/WorkPlaces";
